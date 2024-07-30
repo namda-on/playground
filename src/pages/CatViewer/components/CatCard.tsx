@@ -8,7 +8,13 @@ interface CatCardProps {
 function CatCard({ cat }: CatCardProps) {
   return (
     <div className="card">
-      <img className="card" src={cat.url} alt={`cat${cat.id}`} />
+      <img
+        className="card"
+        width={cat.width}
+        height={cat.height}
+        src={cat.url}
+        alt={`cat${cat.id}`}
+      />
     </div>
   );
 }
