@@ -3,14 +3,13 @@ import { combine } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { create } from "zustand";
 import { useColumnCount } from "./column";
-import { mockData } from "@/pages/CatViewer/mock";
 
 type CatStoreState = {
   cats: Cat[];
 };
 
 const initialCatStore: CatStoreState = {
-  cats: mockData,
+  cats: [],
 };
 
 export const useCatStore = create(
