@@ -11,14 +11,15 @@ main {
 .container {
   display: flex;
   height: 100%;
-  gap: 15px;
+  gap: 16px;
+  padding: 6px 16px;
 }
 
 .column {
   display: flex;
   height: min-content;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
 .card {
