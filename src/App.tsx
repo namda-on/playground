@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import CatViewer from "./pages/CatViewer";
 import WorkingHours from "./pages/WorkingHours";
-import "./App.css";
 import HomePage from "./pages/Home";
 
 function App() {
