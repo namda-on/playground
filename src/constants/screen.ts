@@ -1,0 +1,10 @@
+export const WIDTH = {
+  CONTENT_MAX: 1200,
+  COLUMN_GAP: 15,
+  IMAGE: 200,
+};
+
+export const COLUMN_BREAK_POINT = {
+  TWO: 2 * WIDTH.IMAGE + WIDTH.COLUMN_GAP,
+  THREE: 3 * WIDTH.IMAGE + 2 * WIDTH.COLUMN_GAP,
+};
