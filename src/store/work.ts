@@ -1,6 +1,6 @@
 import { DAY } from "@/constants/dayForm";
 import { create } from "zustand";
-import { combine } from "zustand/middleware";
+import { combine, createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { v4 as uuidv4 } from "uuid";
 
@@ -45,41 +45,68 @@ const initialWorkTimeStoreState: WorkTimeStoreState = {
 };
 
 export const useWorkTimeStore = create(
-  immer(
-    combine(initialWorkTimeStoreState, (set) => ({
-      actions: {
-        addNewTimeRangeTo: (day: DAY) =>
-          set((state) => {
-            state.workTime[day] = [...state.workTime[day], makeNewTimeRange()];
-          }),
-        deleteTimeRangeByIdAt: (id: string, day: DAY) =>
-          set((state) => {
-            state.workTime[day] = state.workTime[day].filter(
-              (row) => row.id !== id
-            );
-          }),
-        updateTimeRangeValue: (payload: {
-          timeRangeId: string;
-          day: DAY;
-          value: string;
-          type: TimeSelectType;
-        }) =>
-          set((state) => {
-            const { timeRangeId, day, type, value } = payload;
-            state.workTime[day] = state.workTime[day].map((row) => {
-              if (row.id !== timeRangeId) return row;
-              type === "start"
-                ? (row.startTime = value)
-                : (row.endTime = value);
-              return row;
-            });
-          }),
-        resetWorkTimeToSavedVersion: () =>
-          set((state) => {
-            state.workTime = state.savedWorkTime;
-          }),
+  persist(
+    immer(
+      combine(initialWorkTimeStoreState, (set) => ({
+        actions: {
+          addNewTimeRangeTo: (day: DAY) =>
+            set((state) => {
+              state.workTime[day] = [
+                ...state.workTime[day],
+                makeNewTimeRange(),
+              ];
+            }),
+          deleteTimeRangeByIdAt: (id: string, day: DAY) =>
+            set((state) => {
+              state.workTime[day] = state.workTime[day].filter(
+                (row) => row.id !== id
+              );
+            }),
+          updateTimeRangeValue: (payload: {
+            timeRangeId: string;
+            day: DAY;
+            value: string;
+            type: TimeSelectType;
+          }) =>
+            set((state) => {
+              const { timeRangeId, day, type, value } = payload;
+              state.workTime[day] = state.workTime[day].map((row) => {
+                if (row.id !== timeRangeId) return row;
+                type === "start"
+                  ? (row.startTime = value)
+                  : (row.endTime = value);
+                return row;
+              });
+            }),
+          resetWorkTimeToSavedVersion: () =>
+            set((state) => {
+              state.workTime = state.savedWorkTime;
+            }),
+          saveCurrentWorkTime: () =>
+            set((state) => {
+              state.savedWorkTime = state.workTime;
+            }),
+        },
+      }))
+    ),
+    {
+      name: "workTime-storage",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ savedWorkTime: state.savedWorkTime }),
+      merge: (persistedState, currentState) => {
+        if (typeof persistedState === "object" && persistedState !== null) {
+          // NOTE : override current workTime
+          return {
+            ...currentState,
+            ...persistedState,
+            workTime: (
+              persistedState as Pick<WorkTimeStoreState, "savedWorkTime">
+            ).savedWorkTime,
+          };
+        }
+        return currentState;
       },
-    }))
+    }
   )
 );
 
