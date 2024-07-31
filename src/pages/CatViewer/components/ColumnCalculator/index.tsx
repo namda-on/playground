@@ -2,8 +2,8 @@ import {
   threeColumnMediaQuery,
   twoColumnMediaQuery,
 } from "@/constants/mediaQueries";
-import { getColumnCount, getColumnWidth } from "@/libs/calculateRow";
-import { useColumnActions, useColumnCount } from "@/store/column";
+import { getColumnCount } from "@/libs/calculateColumn";
+import { useColumnActions } from "@/store/column";
 import { useCallback, useLayoutEffect } from "react";
 
 interface ColumnCalculatorProps {
@@ -11,23 +11,12 @@ interface ColumnCalculatorProps {
 }
 
 export default function ColumnCalculator({ children }: ColumnCalculatorProps) {
-  const currentColumnCount = useColumnCount();
-  const { setColumnCount, setColumnWidth } = useColumnActions();
+  const { setColumnCount } = useColumnActions();
 
   const updateColumnCount = useCallback(() => {
     const newColumnCount = getColumnCount();
     setColumnCount(newColumnCount);
   }, [setColumnCount]);
-
-  // calculate each column's width according to screen width
-  const calculateColumnWidth = useCallback(
-    () =>
-      requestAnimationFrame(() => {
-        const columnWidth = getColumnWidth(currentColumnCount);
-        setColumnWidth(columnWidth);
-      }),
-    [currentColumnCount, setColumnWidth]
-  );
 
   useLayoutEffect(
     function initCalculateColumnCount() {
@@ -40,14 +29,6 @@ export default function ColumnCalculator({ children }: ColumnCalculatorProps) {
       };
     },
     [updateColumnCount]
-  );
-
-  useLayoutEffect(
-    function initCalculateColumnWidth() {
-      window.addEventListener("resize", calculateColumnWidth);
-      return () => window.removeEventListener("resize", calculateColumnWidth);
-    },
-    [calculateColumnWidth]
   );
 
   return <>{children}</>;

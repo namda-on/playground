@@ -1,6 +1,6 @@
 export const WIDTH = {
   CONTENT_MAX: 1200,
-  COLUMN_GAP: 15,
+  COLUMN_GAP: 16,
   IMAGE: 200,
   PADDING: 16,
 };
