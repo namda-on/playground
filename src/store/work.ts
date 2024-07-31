@@ -74,6 +74,10 @@ export const useWorkTimeStore = create(
               return row;
             });
           }),
+        resetWorkTimeToSavedVersion: () =>
+          set((state) => {
+            state.workTime = state.savedWorkTime;
+          }),
       },
     }))
   )
