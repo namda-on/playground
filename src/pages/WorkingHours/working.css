@@ -1,0 +1,103 @@
+#root {
+  height: 100%;
+}
+
+main {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: row;
+  height: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #fcfcff;
+}
+
+.left-column {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 10rem;
+  font-weight: 500;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1;
+  padding: 0px 30px;
+}
+
+.right-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  border-bottom: 1px solid lightgray;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-row {
+  width: 100%;
+  display: flex;
+  min-height: 4rem;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid lightgray;
+  padding: 10px 0px;
+}
+.day-row-left {
+  display: flex;
+  min-width: 100px;
+}
+
+.day-row-right {
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+  flex-grow: 1;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+}
+
+.time-range {
+  display: flex;
+  align-items: center;
+}
+
+.week-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.form-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  height: 4rem;
+
+  width: 100%;
+
+  button {
+    margin-left: 15px;
+  }
+}
