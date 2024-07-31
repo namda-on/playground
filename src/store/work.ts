@@ -10,6 +10,8 @@ export interface ITimeRange {
   endTime: string;
 }
 
+export type TimeSelectType = "start" | "end";
+
 type WorkTimeStoreState = {
   workTime: Record<DAY, ITimeRange[]>;
 };
@@ -45,6 +47,22 @@ export const useWorkTimeStore = create(
             state.workTime[day] = state.workTime[day].filter(
               (row) => row.id !== id
             );
+          }),
+        updateTimeRangeValue: (payload: {
+          timeRangeId: string;
+          day: DAY;
+          value: string;
+          type: TimeSelectType;
+        }) =>
+          set((state) => {
+            const { timeRangeId, day, type, value } = payload;
+            state.workTime[day] = state.workTime[day].map((row) => {
+              if (row.id !== timeRangeId) return row;
+              type === "start"
+                ? (row.startTime = value)
+                : (row.endTime = value);
+              return row;
+            });
           }),
       },
     }))

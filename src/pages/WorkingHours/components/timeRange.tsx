@@ -26,9 +26,19 @@ function TimeRange({ day, timeRange, isLast = false }: TimeRangeProps) {
 
   return (
     <div className="time-range">
-      <TimeSelect value={timeRange.startTime} />
+      <TimeSelect
+        timeRangeId={timeRange.id}
+        day={day}
+        type="start"
+        value={timeRange.startTime}
+      />
       <p>&nbsp;-&nbsp;</p>
-      <TimeSelect value={timeRange.endTime} />
+      <TimeSelect
+        timeRangeId={timeRange.id}
+        day={day}
+        type="end"
+        value={timeRange.endTime}
+      />
       <IconButton
         onClick={onClickDelete}
         sx={{ width: "30px", height: "30px" }}
