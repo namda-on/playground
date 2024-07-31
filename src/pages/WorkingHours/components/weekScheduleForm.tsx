@@ -1,10 +1,13 @@
 import { DAY } from "@/constants/dayForm";
 import DayRow from "./dayRow";
-import { Button } from "@mui/material";
+import { useWorkTimeHasDiff } from "@/store/work";
+import WeekScheduleFormFooter from "./weekScheduleFormFooter";
 
 const DAYS = Object.entries(DAY).map(([key, value]) => value);
 
 export default function WeekScheduleForm() {
+  const hasDiff = useWorkTimeHasDiff();
+
   return (
     <form className="week-form" onSubmit={(e) => e.preventDefault()}>
       <div className="form-body">
@@ -12,12 +15,7 @@ export default function WeekScheduleForm() {
           <DayRow key={day} day={day} />
         ))}
       </div>
-      <div className="form-footer">
-        <Button size="small" type="button">
-          Cancel
-        </Button>
-        <Button size="small">Update</Button>
-      </div>
+      {hasDiff && <WeekScheduleFormFooter />}
     </form>
   );
 }

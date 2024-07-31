@@ -14,6 +14,7 @@ export type TimeSelectType = "start" | "end";
 
 type WorkTimeStoreState = {
   workTime: Record<DAY, ITimeRange[]>;
+  savedWorkTime: Record<DAY, ITimeRange[]>;
 };
 
 const makeNewTimeRange = () => ({
@@ -24,6 +25,15 @@ const makeNewTimeRange = () => ({
 
 const initialWorkTimeStoreState: WorkTimeStoreState = {
   workTime: {
+    [DAY.SUNDAY]: [makeNewTimeRange()],
+    [DAY.MONDAY]: [makeNewTimeRange()],
+    [DAY.TUESDAY]: [makeNewTimeRange()],
+    [DAY.WEDNESDAY]: [makeNewTimeRange()],
+    [DAY.THURSDAY]: [makeNewTimeRange()],
+    [DAY.FRIDAY]: [makeNewTimeRange()],
+    [DAY.SATURDAY]: [makeNewTimeRange()],
+  },
+  savedWorkTime: {
     [DAY.SUNDAY]: [makeNewTimeRange()],
     [DAY.MONDAY]: [makeNewTimeRange()],
     [DAY.TUESDAY]: [makeNewTimeRange()],
@@ -73,3 +83,22 @@ export const useWorkTimeAt = (day: DAY) =>
   useWorkTimeStore((state) => state.workTime[day]);
 export const useWorkTimeStoreActions = () =>
   useWorkTimeStore((state) => state.actions);
+
+export const useWorkTimeHasDiff = () => {
+  const { workTime, savedWorkTime } = useWorkTimeStore();
+
+  for (const [day, range] of Object.entries(workTime)) {
+    const savedRange = savedWorkTime[day as DAY];
+    if (range.length !== savedRange.length) return true;
+
+    for (let i = 0; i < range.length; i++) {
+      if (
+        range[i].startTime !== savedRange[i].startTime ||
+        range[i].endTime !== savedRange[i].endTime
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
