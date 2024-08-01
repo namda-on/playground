@@ -72,9 +72,20 @@ main {
   gap: 10px;
 }
 
-.time-range {
+.time-range-container {
   display: flex;
   align-items: center;
+}
+
+.time-range {
+  padding: 3px 5px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.time-range.error {
+  border: 1.5px solid #f06666;
 }
 
 .week-form {

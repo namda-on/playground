@@ -57,3 +57,12 @@ export const getAvailableTimeOptions = (availableStartTime?: string) => {
     return acc;
   }, [] as string[]);
 };
+
+export const isEarlierThan = (startTime: string, endTime: string) => {
+  const [startHour, startMinute] = getNumberHourAndMinutes(startTime);
+  const [endHour, endMinute] = getNumberHourAndMinutes(endTime);
+
+  if (startHour < endHour) return true;
+  if (startHour === endHour) return startMinute < endMinute;
+  return false;
+};

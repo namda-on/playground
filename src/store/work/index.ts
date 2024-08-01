@@ -3,7 +3,10 @@ import { create } from "zustand";
 import { combine, createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { v4 as uuidv4 } from "uuid";
-import { getAvailableStartTimesUpdatedDayWorkTime } from "./utils";
+import {
+  checkIsValidWorkTime,
+  getAvailableStartTimesUpdatedDayWorkTime,
+} from "./utils";
 import { getNextTimeOption } from "@/libs/workTimeUtils";
 
 export interface ITimeRange {
@@ -18,6 +21,7 @@ export type TimeSelectType = "start" | "end";
 export type WorkTimeStoreState = {
   workTime: Record<DAY, ITimeRange[]>;
   savedWorkTime: Record<DAY, ITimeRange[]>;
+  isValid: Boolean;
 };
 
 const DEFAULT_START_TIME = "09:00";
@@ -53,6 +57,7 @@ const initialWorkTimeStoreState: WorkTimeStoreState = {
     [DAY.FRIDAY]: [makeNewTimeRange()],
     [DAY.SATURDAY]: [makeNewTimeRange()],
   },
+  isValid: true,
 };
 
 export const useWorkTimeStore = create(
@@ -91,6 +96,7 @@ export const useWorkTimeStore = create(
               state.workTime[day] = getAvailableStartTimesUpdatedDayWorkTime(
                 state.workTime[day]
               );
+              state.isValid = checkIsValidWorkTime(state.workTime);
             }),
           updateTimeRangeValue: (payload: {
             timeRangeId: string;
@@ -113,6 +119,7 @@ export const useWorkTimeStore = create(
               state.workTime[day] = getAvailableStartTimesUpdatedDayWorkTime(
                 state.workTime[day]
               );
+              state.isValid = checkIsValidWorkTime(state.workTime);
             }),
           resetWorkTimeToSavedVersion: () =>
             set((state) => {
@@ -151,6 +158,9 @@ export const useWorkTimeAt = (day: DAY) =>
 
 export const useWorkTimeStoreActions = () =>
   useWorkTimeStore((state) => state.actions);
+
+export const useIsWorkTimeValid = () =>
+  useWorkTimeStore((state) => state.isValid);
 
 export const useWorkTimeHasDiff = () => {
   const { workTime, savedWorkTime } = useWorkTimeStore();

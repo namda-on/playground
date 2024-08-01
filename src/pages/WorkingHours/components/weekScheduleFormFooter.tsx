@@ -1,7 +1,8 @@
-import { useWorkTimeStoreActions } from "@/store/work";
+import { useIsWorkTimeValid, useWorkTimeStoreActions } from "@/store/work";
 import { Button } from "@mui/material";
 
 export default function WeekScheduleFormFooter() {
+  const isValidWorkTime = useIsWorkTimeValid();
   const { resetWorkTimeToSavedVersion, saveCurrentWorkTime } =
     useWorkTimeStoreActions();
 
@@ -20,6 +21,7 @@ export default function WeekScheduleFormFooter() {
         variant="contained"
         size="small"
         sx={{ height: "40px" }}
+        disabled={!isValidWorkTime}
       >
         Update
       </Button>

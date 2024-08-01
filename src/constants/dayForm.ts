@@ -18,3 +18,5 @@ export const HOURS = Array(24)
   });
 
 export const MINUTES = ["00", "15", "30", "45"];
+
+export const LAST_VALID_END_TIME = "23:30";
