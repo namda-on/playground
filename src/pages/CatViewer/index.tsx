@@ -1,7 +1,7 @@
+import { useLayoutEffect, useRef, useState } from "react";
 import CatListColumn from "./components/CatListColumn";
 import ColumnCalculator from "./components/ColumnCalculator";
 import { useCatsByColumns, useCatStoreActions } from "@/store/cat";
-import { useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import { END_POINT } from "@/constants/endpoints";
 import { Cat } from "@/types/cat";
@@ -51,7 +51,7 @@ function CatViewer() {
 
   return (
     <ColumnCalculator>
-      <main>
+      <main className="cat-page">
         <div className="container">
           {catsByColumn.map((catList, columnIdx) => (
             <CatListColumn key={columnIdx} cats={catList} />

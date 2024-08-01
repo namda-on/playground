@@ -4,7 +4,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 function WorkingHours() {
   return (
-    <main>
+    <main className="work-page">
       <div className="left-column">
         <p>Working hour</p>
       </div>
