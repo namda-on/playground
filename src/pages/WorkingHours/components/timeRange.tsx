@@ -31,6 +31,7 @@ function TimeRange({ day, timeRange, isLast = false }: TimeRangeProps) {
         day={day}
         type="start"
         value={timeRange.startTime}
+        availableStartTime={timeRange.availableStartTime}
       />
       <p>&nbsp;-&nbsp;</p>
       <TimeSelect
@@ -38,6 +39,7 @@ function TimeRange({ day, timeRange, isLast = false }: TimeRangeProps) {
         day={day}
         type="end"
         value={timeRange.endTime}
+        availableStartTime={timeRange.availableStartTime}
       />
       <IconButton
         onClick={onClickDelete}

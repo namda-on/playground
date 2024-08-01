@@ -1,26 +1,42 @@
-import { memo, useCallback } from "react";
-import { DAY, HOURS, MINUTES } from "@/constants/dayForm";
+import { memo, useCallback, useMemo } from "react";
+import { DAY } from "@/constants/dayForm";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { TimeSelectType, useWorkTimeStoreActions } from "@/store/work";
-
-const options = HOURS.reduce((acc, hour) => {
-  MINUTES.forEach((minute) => {
-    acc.push(`${hour}:${minute}`);
-  });
-
-  return acc;
-}, [] as string[]);
+import {
+  getAvailableTimeOptions,
+  getNextTimeOption,
+} from "@/libs/workTimeUtils";
 
 interface TimeSelectProps {
   timeRangeId: string;
   day: DAY;
   type: TimeSelectType;
   value: string;
+  availableStartTime?: string;
 }
 
-function TimeSelect({ value, type, day, timeRangeId }: TimeSelectProps) {
+function TimeSelect({
+  value,
+  type,
+  day,
+  timeRangeId,
+  availableStartTime,
+}: TimeSelectProps) {
   const { updateTimeRangeValue } = useWorkTimeStoreActions();
+
+  const availableTimeOption = useMemo(
+    () =>
+      !availableStartTime || type === "start"
+        ? availableStartTime
+        : getNextTimeOption(availableStartTime),
+    [availableStartTime, type]
+  );
+
+  const options = useMemo(
+    () => getAvailableTimeOptions(availableTimeOption),
+    [availableTimeOption]
+  );
 
   const onSelect = useCallback(
     (event: SelectChangeEvent<string>) => {

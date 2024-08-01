@@ -3,24 +3,35 @@ import { create } from "zustand";
 import { combine, createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { v4 as uuidv4 } from "uuid";
+import { getAvailableStartTimesUpdatedDayWorkTime } from "./utils";
+import { getNextTimeOption } from "@/libs/workTimeUtils";
 
 export interface ITimeRange {
   id: string;
   startTime: string;
   endTime: string;
+  availableStartTime?: string;
 }
 
 export type TimeSelectType = "start" | "end";
 
-type WorkTimeStoreState = {
+export type WorkTimeStoreState = {
   workTime: Record<DAY, ITimeRange[]>;
   savedWorkTime: Record<DAY, ITimeRange[]>;
 };
 
-const makeNewTimeRange = () => ({
+const DEFAULT_START_TIME = "09:00";
+const DEFAULT_END_TIME = "17:00";
+
+const makeNewTimeRange = (payload?: {
+  startTime: string;
+  endTime: string;
+  availableStartTime: string;
+}): ITimeRange => ({
   id: uuidv4(),
-  startTime: "09:00",
-  endTime: "17:00",
+  startTime: payload ? payload.startTime : DEFAULT_START_TIME,
+  endTime: payload ? payload.endTime : DEFAULT_END_TIME,
+  availableStartTime: payload?.availableStartTime,
 });
 
 const initialWorkTimeStoreState: WorkTimeStoreState = {
@@ -51,15 +62,34 @@ export const useWorkTimeStore = create(
         actions: {
           addNewTimeRangeTo: (day: DAY) =>
             set((state) => {
-              state.workTime[day] = [
-                ...state.workTime[day],
-                makeNewTimeRange(),
-              ];
+              const dayWorkTimeList = state.workTime[day];
+              let startTime = DEFAULT_START_TIME,
+                endTime = DEFAULT_END_TIME;
+
+              if (dayWorkTimeList.length) {
+                const previousEndTime =
+                  dayWorkTimeList[dayWorkTimeList.length - 1].endTime;
+
+                startTime = getNextTimeOption(previousEndTime);
+                endTime = getNextTimeOption(startTime);
+              }
+
+              state.workTime[day] = getAvailableStartTimesUpdatedDayWorkTime([
+                ...dayWorkTimeList,
+                makeNewTimeRange({
+                  startTime,
+                  endTime,
+                  availableStartTime: startTime,
+                }),
+              ]);
             }),
           deleteTimeRangeByIdAt: (id: string, day: DAY) =>
             set((state) => {
               state.workTime[day] = state.workTime[day].filter(
                 (row) => row.id !== id
+              );
+              state.workTime[day] = getAvailableStartTimesUpdatedDayWorkTime(
+                state.workTime[day]
               );
             }),
           updateTimeRangeValue: (payload: {
@@ -70,13 +100,19 @@ export const useWorkTimeStore = create(
           }) =>
             set((state) => {
               const { timeRangeId, day, type, value } = payload;
-              state.workTime[day] = state.workTime[day].map((row) => {
+              const dayWorkTimeList = state.workTime[day];
+
+              state.workTime[day] = dayWorkTimeList.map((row, idx) => {
                 if (row.id !== timeRangeId) return row;
+
                 type === "start"
                   ? (row.startTime = value)
                   : (row.endTime = value);
                 return row;
               });
+              state.workTime[day] = getAvailableStartTimesUpdatedDayWorkTime(
+                state.workTime[day]
+              );
             }),
           resetWorkTimeToSavedVersion: () =>
             set((state) => {
@@ -112,6 +148,7 @@ export const useWorkTimeStore = create(
 
 export const useWorkTimeAt = (day: DAY) =>
   useWorkTimeStore((state) => state.workTime[day]);
+
 export const useWorkTimeStoreActions = () =>
   useWorkTimeStore((state) => state.actions);
 

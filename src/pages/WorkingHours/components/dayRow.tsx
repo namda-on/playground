@@ -3,13 +3,13 @@ import { useWorkTimeAt, useWorkTimeStoreActions } from "@/store/work";
 import TimeRange from "./timeRange";
 import AddIcon from "@mui/icons-material/Add";
 import { IconButton } from "@mui/material";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 
 interface DayRowProps {
   day: DAY;
 }
 
-export default function DayRow({ day }: DayRowProps) {
+function DayRow({ day }: DayRowProps) {
   const { addNewTimeRangeTo } = useWorkTimeStoreActions();
   const timeRanges = useWorkTimeAt(day);
   const addTimeRange = useCallback(() => {
@@ -43,3 +43,5 @@ export default function DayRow({ day }: DayRowProps) {
     </div>
   );
 }
+
+export default memo(DayRow);
