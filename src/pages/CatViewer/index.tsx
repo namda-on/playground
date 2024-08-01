@@ -1,45 +1,54 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import ColumnCalculator from "./components/ColumnCalculator";
 import { useCatStoreActions } from "@/store/cat";
-import axios from "axios";
-import { END_POINT } from "@/constants/endpoints";
-import { Cat } from "@/types/cat";
 
 import "./cat.css";
 import CatListContainer from "./components/CatListContainer";
 import LoadingIndicator from "./components/LoadingIndicator";
+import useGetCats from "./hooks/useGetCats";
+import FetchErrorIndicator from "./components/FetchErrorIndicator";
 
 function CatViewer() {
-  const { addCats } = useCatStoreActions();
   const scrollEndDivRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
+  const { addCats } = useCatStoreActions();
+  const { isLoading, hasError, fetchCats, resetError } = useGetCats();
+
+  const fetchCatAndAdd = useCallback(
+    async (page: number) => {
+      const cats = await fetchCats(page);
+      if (cats) {
+        addCats(cats);
+      }
+    },
+    [fetchCats, addCats]
+  );
+
+  const refetch = useCallback(
+    async (page: number) => {
+      resetError();
+      fetchCatAndAdd(page);
+    },
+    [resetError, fetchCatAndAdd]
+  );
 
   useLayoutEffect(
-    function fetchCat() {
-      (async function fetchCatApi() {
-        setIsLoading(true);
-        const result = await axios.get<Cat[]>(
-          `${END_POINT.CAT_API}/images/search?limit=30&page=${page}`,
-          { headers: { "x-api-key": process.env.REACT_APP_CAT_API_KEY } }
-        );
-        setIsLoading(false);
-        addCats(result.data);
-      })();
+    function fetchCatByPage() {
+      fetchCatAndAdd(page);
     },
-    [addCats, page]
+    [page, fetchCatAndAdd]
   );
 
   useLayoutEffect(function registerIntersectionObserver() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !isLoading) {
+          if (entry.isIntersecting && !isLoading && !hasError) {
             setPage((prev) => prev + 1);
           }
         });
       },
-      { rootMargin: "800px" }
+      { rootMargin: "600px" }
     );
 
     if (scrollEndDivRef.current) {
@@ -54,6 +63,7 @@ function CatViewer() {
       <main className="cat-page">
         <CatListContainer />
         {isLoading && <LoadingIndicator />}
+        {hasError && <FetchErrorIndicator refetch={() => refetch(page)} />}
         <div ref={scrollEndDivRef} style={{ width: "100%", height: "2px" }} />
       </main>
     </ColumnCalculator>
