@@ -1,15 +1,15 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import CatListColumn from "./components/CatListColumn";
 import ColumnCalculator from "./components/ColumnCalculator";
-import { useCatsByColumns, useCatStoreActions } from "@/store/cat";
+import { useCatStoreActions } from "@/store/cat";
 import axios from "axios";
 import { END_POINT } from "@/constants/endpoints";
 import { Cat } from "@/types/cat";
 
 import "./cat.css";
+import CatListContainer from "./components/CatListContainer";
+import LoadingIndicator from "./components/LoadingIndicator";
 
 function CatViewer() {
-  const catsByColumn = useCatsByColumns();
   const { addCats } = useCatStoreActions();
   const scrollEndDivRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,15 +52,9 @@ function CatViewer() {
   return (
     <ColumnCalculator>
       <main className="cat-page">
-        <div className="container">
-          {catsByColumn.map((catList, columnIdx) => (
-            <CatListColumn key={columnIdx} cats={catList} />
-          ))}
-        </div>
-        <div
-          ref={scrollEndDivRef}
-          style={{ width: "100%", height: "1px", color: "red" }}
-        />
+        <CatListContainer />
+        {isLoading && <LoadingIndicator />}
+        <div ref={scrollEndDivRef} style={{ width: "100%", height: "2px" }} />
       </main>
     </ColumnCalculator>
   );
