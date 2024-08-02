@@ -69,12 +69,11 @@ export default function useZoomAnimation(
 
     const left = initialLeft - finalLeft;
     const top = initialTop - finalTop;
-    const scale =
-      initialWidth > initialHeight
-        ? initialWidth / finalWidth
-        : initialHeight / finalHeight;
+    const widthScale = initialWidth / finalWidth;
+    const heightScale = initialHeight / finalHeight;
 
-    imageElement.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
+    // TODO : image tag width가 아닌 실제 랜더링된 object width 로 scale 계산하도록 수정
+    imageElement.style.transform = `translate(${left}px, ${top}px) scale(${widthScale},${heightScale})`;
   };
 
   const clipCardContent = () => {
