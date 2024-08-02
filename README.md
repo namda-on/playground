@@ -1,5 +1,3 @@
-# Yess Web Frontend 사전 과제 기반 코드 (CRA 활용)
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
