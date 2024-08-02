@@ -1,36 +1,31 @@
 import { memo, useCallback, useRef } from "react";
 import { Cat } from "@/types/cat";
+import { CLASS } from "@/constants/class";
+import useZoomAnimation from "../hooks/useZoomAnimation";
 
 interface CatCardProps {
   cat: Cat;
 }
 
-const EXPANDED_CLASS = "card-expanded";
-
 function CatCard({ cat }: CatCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const { zoomIn, zoomOut } = useZoomAnimation(cardRef);
 
   const onClickCard = useCallback(() => {
     const cardElement = cardRef.current;
     if (!cardElement) return;
-    if (cardElement.classList.contains(EXPANDED_CLASS)) {
-      cardElement.style.removeProperty("height");
-      cardElement.classList.remove(EXPANDED_CLASS);
-    } else {
-      const { height } = cardElement.getBoundingClientRect();
-      cardElement.style.height = `${height}px`;
-
-      cardElement.classList.add(EXPANDED_CLASS);
-    }
-  }, []);
+    if (cardElement.classList.contains(CLASS.cardExpanded)) return zoomOut();
+    zoomIn();
+  }, [zoomIn, zoomOut]);
 
   return (
     <div ref={cardRef} className="card" onClick={onClickCard}>
-      <div className="image-container">
+      <div ref={imageContainerRef} className={`image-container `}>
         <img
+          className={CLASS.animatable}
           ref={imgRef}
-          className="card"
           width={cat.width}
           height={cat.height}
           src={cat.url}
